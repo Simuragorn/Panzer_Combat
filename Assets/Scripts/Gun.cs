@@ -7,7 +7,7 @@ public class Gun : MonoBehaviour
     public int CoolDownDelayInSeconds = 2;
     public Transform LaunchShellPosition;
 
-    private DateTime LastShotDate = DateTime.Now;
+    private DateTime LastShotDate;
     void Start()
     {
 
@@ -26,7 +26,8 @@ public class Gun : MonoBehaviour
         TimeSpan difference = DateTime.Now - LastShotDate;
         if (difference.TotalSeconds > CoolDownDelayInSeconds)
         {
-            Instantiate(ShellPrefab);
+            var shell = Instantiate(ShellPrefab, LaunchShellPosition);
+            shell.Launch();
             LastShotDate = DateTime.Now;
         }
     }
