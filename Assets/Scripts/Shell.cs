@@ -23,47 +23,73 @@ public class Shell : MonoBehaviour, IDestroyable
 
     public void Launch()
     {
-        StartCoroutine(MoveBullet());
+        Rigidbody.AddForce(Vector2.up * Speed * 10, ForceMode2D.Impulse);
     }
 
-    private void OnTriggerEnter2D(Collider2D targetCollider)
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        var target = targetCollider.gameObject.GetComponent<ITarget>();
+        Vector2 normal = (transform.position - collision.transform.position).normalized;
+
+        var target = collision.gameObject.GetComponent<ITarget>();
         if (target != null)
         {
-            ContactPoint2D[] contacts = new ContactPoint2D[1];
-            targetCollider.GetContacts(contacts);
+            var contacts = new List<ContactPoint2D>();
+            int numberOfContacts = collision.GetContacts(contacts);
             Vector2 contactPoint = contacts[0].point;
 
-            Vector2 closestPointA = targetCollider.ClosestPoint(contactPoint);
-            Vector2 closestPointB = targetCollider.ClosestPoint(contactPoint + (contactPoint - closestPointA));
-
-            Vector2 hullSideVector = closestPointA - closestPointB;
-
-            float contactAngle = Vector2.Angle(hullSideVector, contactPoint);
-            Debug.Log(contactAngle);
-
-            if (contacts.Length > 0)
+            var polygonCollider = collision.gameObject.GetComponent<PolygonCollider2D>();
+            var polygonPoints = GetPolygonColliderPoints(polygonCollider);
+            for (int i = 1; i < polygonPoints.Count; i++)
             {
-                ;
+                bool isCrosses = IsVectorCrossesPoint(polygonPoints[i], polygonPoints[i - 1], contactPoint);
+                if (isCrosses)
+                {
+                    normal = (polygonPoints[i] - polygonPoints[i - 1]).normalized;
+                }
             }
 
+            //direction = Vector2.Reflect(direction, normal);
 
-            Vector2 normal = (transform.position - targetCollider.transform.position).normalized;
-            direction = Vector2.Reflect(direction, normal);
-
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            VFX.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            //VFX.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
         }
     }
 
-    private IEnumerator MoveBullet()
+    private List<Vector2> GetPolygonColliderPoints(PolygonCollider2D polygonCollider)
     {
-        while (true)
+        var polygonPoints = new List<Vector2>();
+        if (polygonCollider == null)
         {
-            transform.Translate(direction * Speed * Time.fixedDeltaTime);
-            yield return new WaitForFixedUpdate();
+            return polygonPoints;
         }
+        int pathCount = polygonCollider.pathCount;
+
+        for (int pathIndex = 0; pathIndex < pathCount; pathIndex++)
+        {
+            Vector2[] pathPoints = polygonCollider.GetPath(pathIndex);
+
+            int pointCount = pathPoints.Length;
+
+            for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
+            {
+                Vector2 point = polygonCollider.transform.TransformPoint(pathPoints[pointIndex]);
+                polygonPoints.Add(point);
+            }
+        }
+        return polygonPoints;
+    }
+
+    private bool IsVectorCrossesPoint(Vector2 point1, Vector2 point2, Vector2 crossPoint)
+    {
+        Vector2 vector1 = crossPoint - point1;
+        Vector2 vector2 = crossPoint - point2;
+
+        // Calculate the cross product
+        float crossProduct = Vector3.Cross(vector1, vector2).z;
+
+        // Check if the cross product is zero (point lies on the line) or has different signs
+        return Mathf.Approximately(crossProduct, 0f) || crossProduct < 0f;
     }
 }

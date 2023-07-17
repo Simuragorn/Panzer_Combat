@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class Hull : MonoBehaviour, ITarget
 {
-    // Start is called before the first frame update
-    void Start()
+    private void OnTriggerEnter2D(Collider2D targetCollider)
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        var target = targetCollider.gameObject.GetComponent<Shell>();
+        if (target != null)
+        {
+            ContactPoint2D[] contacts = new ContactPoint2D[10];
+            targetCollider.GetContacts(contacts);
+            Vector2 contactPoint = contacts[0].point;
+        }
     }
 }
