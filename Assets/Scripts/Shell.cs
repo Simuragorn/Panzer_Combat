@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.HableCurve;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Shell : MonoBehaviour, IDestroyable
 {
     public int Speed;
     public Rigidbody2D Rigidbody;
+    public Collider2D Collider;
     public GameObject VFX;
 
     private Vector2 direction;
+    public Vector2 colliderPoint1;
+    public Vector2 colliderPoint2;
+    public Vector2 contactPoint;
 
     private void Start()
     {
@@ -29,32 +34,56 @@ public class Shell : MonoBehaviour, IDestroyable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Vector2 normal = (transform.position - collision.transform.position).normalized;
+        Vector2 positionContact = (transform.position - collision.transform.position).normalized;
 
         var target = collision.gameObject.GetComponent<ITarget>();
         if (target != null)
         {
             var contacts = new List<ContactPoint2D>();
             int numberOfContacts = collision.GetContacts(contacts);
-            Vector2 contactPoint = contacts[0].point;
+            contactPoint = contacts[0].point;
 
             var polygonCollider = collision.gameObject.GetComponent<PolygonCollider2D>();
             var polygonPoints = GetPolygonColliderPoints(polygonCollider);
-            for (int i = 1; i < polygonPoints.Count; i++)
+            for (int i = 0; i < polygonPoints.Count; i++)
             {
-                bool isCrosses = IsVectorCrossesPoint(polygonPoints[i], polygonPoints[i - 1], contactPoint);
+                Vector2 point2 = polygonPoints[i];
+                Vector2 point1 = i == 0 ? polygonPoints[polygonPoints.Count - 1] : polygonPoints[i - 1];
+                bool isCrosses = IsPointBetweenPoints(point1, point2, contactPoint);
                 if (isCrosses)
                 {
-                    normal = (polygonPoints[i] - polygonPoints[i - 1]).normalized;
+                    colliderPoint1 = point1;
+                    colliderPoint2 = point2;
+                    Vector2 obstacleSide = (point1 - point2).normalized;
+                    float angle = Vector2.Angle(obstacleSide, positionContact);
+                    angle %= 90;
+                    Debug.Log(angle);
+                    //Collider.enabled = false;
                 }
             }
 
-            //direction = Vector2.Reflect(direction, normal);
-
-            //float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            //VFX.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawLine(colliderPoint1, colliderPoint2);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(contactPoint, 0.7f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(colliderPoint1, 0.7f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(colliderPoint2, 0.7f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(colliderPoint1, contactPoint);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(colliderPoint2, contactPoint);
     }
 
     private List<Vector2> GetPolygonColliderPoints(PolygonCollider2D polygonCollider)
@@ -81,15 +110,22 @@ public class Shell : MonoBehaviour, IDestroyable
         return polygonPoints;
     }
 
-    private bool IsVectorCrossesPoint(Vector2 point1, Vector2 point2, Vector2 crossPoint)
+    private bool IsPointBetweenPoints(Vector3 startPoint, Vector3 endPoint, Vector3 targetPoint)
     {
-        Vector2 vector1 = crossPoint - point1;
-        Vector2 vector2 = crossPoint - point2;
+        Vector3 endToStart = endPoint - startPoint;
+        Vector3 targetToStart = targetPoint - startPoint;
 
-        // Calculate the cross product
-        float crossProduct = Vector3.Cross(vector1, vector2).z;
+        var crossVector = Vector3.Cross(targetToStart.normalized, endToStart.normalized);
+        bool colinear = Mathf.Abs(crossVector.x) < 0.1 && Mathf.Abs(crossVector.y) < 0.1 && Mathf.Abs(crossVector.z) < 0.1;
+        if (!colinear)
+            return false;
 
-        // Check if the cross product is zero (point lies on the line) or has different signs
-        return Mathf.Approximately(crossProduct, 0f) || crossProduct < 0f;
+        float epsilon = 0.0001f;
+        bool suitableMagnitude = targetToStart.magnitude <= endToStart.magnitude + epsilon;
+
+        if (!suitableMagnitude)
+            return false;
+
+        return true;
     }
 }

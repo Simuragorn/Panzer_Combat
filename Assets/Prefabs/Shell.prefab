@@ -133,6 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 1
   Rigidbody: {fileID: -6955841012396613729}
+  Collider: {fileID: 8804867470779500344}
   VFX: {fileID: 1529781545516045813}
 --- !u!70 &8804867470779500344
 CapsuleCollider2D:
