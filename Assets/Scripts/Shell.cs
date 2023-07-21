@@ -1,7 +1,6 @@
 using Assets.Scripts.Helpers;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -12,22 +11,24 @@ public class Shell : MonoBehaviour, IDestroyable
     public GameObject VFX;
 
     private Vector2 direction;
-    public Vector2 colliderPoint1;
-    public Vector2 colliderPoint2;
-    public Vector2 contactPoint;
-
-    private void Start()
-    {
-        direction = transform.up;
-    }
+    private Vector2 contactPoint;
+    private Vector2 positionPoint;
+    private Vector2 obstacleVector;
 
     public void Destroy()
     {
         Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        direction = transform.up;
+    }
+
     public void Launch()
     {
+        Vector3 currentRotation = transform.rotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(currentRotation);
         StartCoroutine(Move());
     }
 
@@ -40,7 +41,6 @@ public class Shell : MonoBehaviour, IDestroyable
         }
     }
 
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         var target = collision.gameObject.GetComponent<ITarget>();
@@ -48,26 +48,28 @@ public class Shell : MonoBehaviour, IDestroyable
         {
             return;
         }
-        contactPoint = collision.ClosestPoint(transform.position);
-
-        var polygonCollider = collision.gameObject.GetComponent<PolygonCollider2D>();
-        var polygonPoints = ColliderExtension.GetColliderPoints(polygonCollider);
-        for (int i = 0; i < polygonPoints.Count; i++)
+        RaycastHit2D result = Physics2D.Raycast(transform.position, transform.up);
+        if (result.collider == null ||
+            result.collider.gameObject != collision.gameObject)
         {
-            Vector2 point2 = polygonPoints[i];
-            Vector2 point1 = i == 0 ? polygonPoints[polygonPoints.Count - 1] : polygonPoints[i - 1];
-
-            bool isCrosses = ((Vector3)contactPoint).IsLaysBetweenPoints(point1, point2);
-            if (isCrosses)
-            {
-                colliderPoint1 = point1;
-                colliderPoint2 = point2;
-                Vector2 obstacleSide = (point1 - point2).normalized;
-                float angle = Vector2.Angle(obstacleSide, contactPoint);
-                angle %= 90;
-                Debug.Log(angle);
-            }
+            return;
         }
+        Vector2 shellPosition = transform.position;
+        contactPoint = result.point;
+        var colliderPoints = target.GetColliderPoints();
+        Vector2? crossingVector = VectorHelper.FindVectorThatCrossesTargetPoint(colliderPoints, contactPoint);
+        if (!crossingVector.HasValue)
+        {
+            return;
+        }
+        obstacleVector = crossingVector.Value;
+        Vector2 shootingVector = contactPoint - shellPosition;
+        float angle = Vector2.Angle(obstacleVector, shootingVector);
+        Debug.Log(angle);
+        positionPoint = shellPosition;
+        Vector3 currentRotation = transform.rotation.eulerAngles;
+        currentRotation.z += angle;
+        transform.rotation = Quaternion.Euler(currentRotation);
     }
 
     private void OnDrawGizmos()
@@ -75,16 +77,10 @@ public class Shell : MonoBehaviour, IDestroyable
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(contactPoint, 0.7f);
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(colliderPoint1, 0.7f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(positionPoint, 0.7f);
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(colliderPoint2, 0.7f);
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(colliderPoint1, contactPoint);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(colliderPoint2, contactPoint);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(obstacleVector, obstacleVector * 0.5f);
     }
 }

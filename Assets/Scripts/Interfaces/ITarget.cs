@@ -4,4 +4,5 @@ using UnityEngine;
 
 public interface ITarget
 {
+    List<Vector2> GetColliderPoints();
 }

@@ -1,26 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class Border : MonoBehaviour
+public class Border : MonoBehaviour, ITarget
 {
     public BoxCollider2D Collider;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public List<Vector2> GetColliderPoints()
     {
-        TryDestroyObject(collision.gameObject);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        TryDestroyObject(collision.gameObject);
-    }
-
-    private void TryDestroyObject(GameObject gameObject)
-    {
-        var destroyableObject = gameObject.GetComponent<IDestroyable>();
-        if (destroyableObject != null)
-        {
-            destroyableObject.Destroy();
-        }
+        return new List<Vector2>();
     }
 }
