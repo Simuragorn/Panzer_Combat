@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShellPrefab: {fileID: 5279899506841729888, guid: 54cfd13d4fe56d9418782f37c9f82544, type: 3}
-  CoolDownDelayInSeconds: 2
+  CoolDownDelayInSeconds: 1
   LaunchShellPosition: {fileID: 5840443221546465918}
 --- !u!1 &8884098484720007827
 GameObject:

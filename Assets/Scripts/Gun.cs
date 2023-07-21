@@ -4,18 +4,14 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
     public Shell ShellPrefab;
-    public int CoolDownDelayInSeconds = 2;
+    public float CoolDownDelayInSeconds = 2;
     public Transform LaunchShellPosition;
 
     private DateTime LastShotDate;
-    void Start()
-    {
-
-    }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
             TryFire();
         }
