@@ -4,79 +4,101 @@ using Assets.Scripts.Enums;
 using Assets.Scripts.Helpers;
 using System.Collections;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.UI.CanvasScaler;
 
 [RequireComponent(typeof(Collider2D))]
-public abstract class BaseShell : MonoBehaviour, IDestroyable
+public class Shell : MonoBehaviour
 {
-    public float OriginalSpeed;
-    public float OriginalPenetration;
+    [SerializeField] protected float originalSpeed = 10;
+    [SerializeField] protected float originalPenetration = 40;
 
     protected float maxColliderDistance;
 
     protected float actualSpeed;
     protected float actualPenetration;
 
-    public Collider2D Collider;
-    public GameObject VFX;
+    protected Collider2D collider;
 
-    protected Vector2 direction;
+    protected Tank ownerTank;
+    protected bool firstHit = true;
+
+    protected Vector2 shootingDirection;
     protected Vector2 contactPoint;
     protected Vector2 positionPoint;
     protected Vector2 obstacleVector;
 
-    public void Destroy()
+    protected Target currentTarget;
+
+    protected void Awake()
+    {
+        collider = GetComponent<Collider2D>();
+    }
+
+    public void Launch(Vector2 direction, Tank tank)
+    {
+        ownerTank = tank;
+
+        actualPenetration = originalPenetration;
+        actualSpeed = originalSpeed;
+        shootingDirection = direction;
+        maxColliderDistance = Vector2.Distance(collider.bounds.min, collider.bounds.max);
+        StartCoroutine(Move());
+    }
+
+    protected IEnumerator Move()
+    {
+        while (true)
+        {
+            transform.Translate(actualSpeed * Time.fixedDeltaTime * Vector2.up);
+            yield return new WaitForFixedUpdate();
+        }
+    }
+    protected void Destroy()
     {
         Destroy(gameObject);
     }
 
     protected bool IsSpeedAndPenetrationUnderLimit()
     {
-        return actualPenetration / OriginalPenetration < ShootingConstants.MinOriginalPenetrationPartForShooting ||
-            actualSpeed / OriginalSpeed < ShootingConstants.MinOriginalSpeedPartForShooting;
-    }
-
-    public void Launch()
-    {
-        actualPenetration = OriginalPenetration;
-        actualSpeed = OriginalSpeed;
-        direction = transform.up;
-        maxColliderDistance = Vector2.Distance(Collider.bounds.min, Collider.bounds.max);
-        Debug.Log(direction);
-        StartCoroutine(Move());
-    }
-
-    public IEnumerator Move()
-    {
-        while (true)
-        {
-            transform.Translate(actualSpeed * Time.fixedDeltaTime * direction);
-            yield return new WaitForFixedUpdate();
-        }
+        return actualPenetration / originalPenetration < ShootingConstants.MinOriginalPenetrationPartForShooting ||
+            actualSpeed / originalSpeed < ShootingConstants.MinOriginalSpeedPartForShooting;
     }
 
     protected void OnTriggerEnter2D(Collider2D collision)
     {
-        var target = collision.gameObject.GetComponent<BaseTarget>();
+        TrySetTarget(collision);
+        if (currentTarget != null)
+        {
+            OnHitTarget(currentTarget);
+            currentTarget = null;
+        }
+    }
+
+    protected void TrySetTarget(Collider2D collision)
+    {
+        var target = collision.gameObject.GetComponent<Target>();
         if (target == null)
         {
             return;
         }
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, direction);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up);
         RaycastHit2D? hit = hits?.FirstOrDefault(h => h.collider.gameObject == collision.gameObject);
-        if (hit == null ||
-            hit.Value.collider?.gameObject != collision.gameObject)
+        if (hit?.collider?.gameObject != collision.gameObject)
         {
             return;
         }
+
+        if (firstHit && target.gameObject == ownerTank.gameObject)
+        {
+            firstHit = false;
+            return;
+        }
+        firstHit = false;
         contactPoint = hit.Value.point;
-        OnHitTarget(target);
+        currentTarget = target;
     }
 
-    protected void OnHitTarget(BaseTarget target)
+    protected void OnHitTarget(Target target)
     {
         Vector2 shellPosition = transform.position;
         var colliderPoints = target.GetColliderPoints();
@@ -93,7 +115,7 @@ public abstract class BaseShell : MonoBehaviour, IDestroyable
         ManageTargetHit(target, angle);
     }
 
-    protected void ManageTargetHit(BaseTarget target, float hitAngle)
+    protected void ManageTargetHit(Target target, float hitAngle)
     {
         float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
 
@@ -109,12 +131,13 @@ public abstract class BaseShell : MonoBehaviour, IDestroyable
             case ShellHitResultEnum.Ricochet:
                 penetrationDividerLoss = actualPenetration / effectiveArmor;
                 Vector3 currentRotation = transform.rotation.eulerAngles;
-                currentRotation.z += hitAngle;
+                float rotationAngle = 2 * hitAngle;
+                currentRotation.z -= rotationAngle;
                 transform.rotation = Quaternion.Euler(currentRotation);
-                Debug.Log(direction);
                 Debug.Log("Ricochet");
                 break;
             case ShellHitResultEnum.ShellDestroyed:
+                Debug.Log("Shell Destroyed");
                 Destroy();
                 break;
         }
@@ -127,7 +150,7 @@ public abstract class BaseShell : MonoBehaviour, IDestroyable
         }
     }
 
-    protected ShellHitResultEnum CalculateHitResult(BaseTarget target, float hitAngle)
+    protected ShellHitResultEnum CalculateHitResult(Target target, float hitAngle)
     {
         float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
         float hitAdvantage = actualPenetration / effectiveArmor;

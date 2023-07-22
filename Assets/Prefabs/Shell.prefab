@@ -93,8 +93,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8912936261468619322}
-  - component: {fileID: 5279899506841729888}
   - component: {fileID: 8804867470779500344}
+  - component: {fileID: 8641572344117458549}
   m_Layer: 0
   m_Name: Shell
   m_TagString: Untagged
@@ -118,22 +118,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5279899506841729888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4921208421500158379}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10a388f70b4f8ed4a8a1f5e88ac58eac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OriginalSpeed: 40
-  OriginalPenetration: 40
-  Collider: {fileID: 8804867470779500344}
-  VFX: {fileID: 1529781545516045813}
 --- !u!70 &8804867470779500344
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -150,3 +134,17 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.45, y: 1.4}
   m_Direction: 0
+--- !u!114 &8641572344117458549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921208421500158379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: facec298e1d1cbc4fb409ea43edc509c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  originalSpeed: 10
+  originalPenetration: 60
