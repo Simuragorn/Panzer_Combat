@@ -1,23 +1,13 @@
+using Assets.Scripts;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Hull))]
-[RequireComponent(typeof(Engine))]
-[RequireComponent(typeof(Track))]
-[RequireComponent(typeof(Gun))]
 public class Tank : MonoBehaviour
 {
-    protected Hull hull;
-    protected Engine engine;
-    protected Track track;
-    protected Gun gun;
-
-    protected void Awake()
-    {
-        hull = GetComponent<Hull>();
-        engine = GetComponent<Engine>();
-        track = GetComponent<Track>();
-        gun = GetComponent<Gun>();
-    }
+    [SerializeField] protected List<Armor> armors;
+    [SerializeField] protected Engine engine;
+    [SerializeField] protected Track track;
+    [SerializeField] protected Gun gun;
 
     public void Shoot()
     {

@@ -1,21 +1,29 @@
+using Assets.Scripts;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Track : MonoBehaviour
+public class Track : TankModule
 {
     [SerializeField] protected int originalTorque = 5;
-    protected Rigidbody2D rigidbody;
+    protected new Rigidbody2D rigidbody;
 
     protected int actualTorque;
 
-    protected void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         rigidbody = GetComponent<Rigidbody2D>();
         actualTorque = originalTorque;
     }
 
     public void Rotate(float horizontalAxisInput)
     {
+        if (IsDamaged)
+        {
+            Debug.Log("Damaged");
+            return;
+        }
+
         float torqueForce = -(horizontalAxisInput * actualTorque);
         rigidbody.AddTorque(torqueForce, ForceMode2D.Force);
     }

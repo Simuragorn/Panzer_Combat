@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Helpers;
+﻿using Assets.Scripts.Constants;
+using Assets.Scripts.Enums;
+using Assets.Scripts.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +9,17 @@ using UnityEngine;
 namespace Assets.Scripts
 {
     [RequireComponent(typeof(Collider2D))]
-    public abstract class Target : MonoBehaviour
+    public class Target : MonoBehaviour
     {
         [SerializeField] protected float armorThickness = 30;
-        protected Collider2D collider;
+        protected new Collider2D collider;
 
         protected virtual void Awake()
         {
             collider = GetComponent<Collider2D>();
         }
 
-        public float GetArmorThickness()
+        protected float GetArmorThickness()
         {
             return armorThickness;
         }
@@ -25,11 +27,28 @@ namespace Assets.Scripts
         public float GetEffectiveArmorThickness(float hitAngle)
         {
             float armorThickness = GetArmorThickness();
-            float effectiveArmor = armorThickness / Math.Abs(Mathf.Cos(hitAngle));
+            float divider = Mathf.Cos(hitAngle * Mathf.Deg2Rad);
+            float effectiveArmor = armorThickness / divider;
             return effectiveArmor;
         }
 
-        public void OnPenetrate(Shell baseShell)
+        public virtual ShellHitResultEnum HitAndGetResult(Shell shell, float hitAngle)
+        {
+            float effectiveArmor = GetEffectiveArmorThickness(hitAngle);
+            float hitAdvantage = shell.GetActualPenetration() / effectiveArmor;
+            if (hitAdvantage >= ShootingConstants.MinHitAdvantageForPenetration)
+            {
+                OnPenetrate();
+                return ShellHitResultEnum.Penetrated;
+            }
+            if (hitAdvantage >= ShootingConstants.MinHitAdvantageForRicochet)
+            {
+                return ShellHitResultEnum.Ricochet;
+            }
+            return ShellHitResultEnum.ShellDestroyed;
+        }
+
+        protected virtual void OnPenetrate()
         {
             Debug.Log("Penetrated!");
         }

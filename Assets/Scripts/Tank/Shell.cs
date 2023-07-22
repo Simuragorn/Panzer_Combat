@@ -17,7 +17,7 @@ public class Shell : MonoBehaviour
     protected float actualSpeed;
     protected float actualPenetration;
 
-    protected Collider2D collider;
+    protected new Collider2D collider;
 
     protected Tank ownerTank;
     protected bool firstHit = true;
@@ -45,6 +45,11 @@ public class Shell : MonoBehaviour
         StartCoroutine(Move());
     }
 
+    public float GetActualPenetration()
+    {
+        return actualPenetration;
+    }
+
     protected IEnumerator Move()
     {
         while (true)
@@ -56,12 +61,6 @@ public class Shell : MonoBehaviour
     protected void Destroy()
     {
         Destroy(gameObject);
-    }
-
-    protected bool IsSpeedAndPenetrationUnderLimit()
-    {
-        return actualPenetration / originalPenetration < ShootingConstants.MinOriginalPenetrationPartForShooting ||
-            actualSpeed / originalSpeed < ShootingConstants.MinOriginalSpeedPartForShooting;
     }
 
     protected void OnTriggerEnter2D(Collider2D collision)
@@ -119,14 +118,13 @@ public class Shell : MonoBehaviour
     {
         float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
 
-        ShellHitResultEnum hitResult = CalculateHitResult(target, hitAngle);
+        ShellHitResultEnum hitResult = target.HitAndGetResult(this, hitAngle);
         float penetrationDividerLoss = 0;
 
         switch (hitResult)
         {
             case ShellHitResultEnum.Penetrated:
                 penetrationDividerLoss = effectiveArmor / actualPenetration;
-                target.OnPenetrate(this);
                 break;
             case ShellHitResultEnum.Ricochet:
                 penetrationDividerLoss = actualPenetration / effectiveArmor;
@@ -143,26 +141,6 @@ public class Shell : MonoBehaviour
         }
         actualPenetration -= actualPenetration * penetrationDividerLoss;
         actualSpeed -= actualSpeed * penetrationDividerLoss / 3;
-
-        if (IsSpeedAndPenetrationUnderLimit())
-        {
-            Destroy();
-        }
-    }
-
-    protected ShellHitResultEnum CalculateHitResult(Target target, float hitAngle)
-    {
-        float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
-        float hitAdvantage = actualPenetration / effectiveArmor;
-        if (hitAdvantage >= ShootingConstants.MinHitAdvantageForPenetration)
-        {
-            return ShellHitResultEnum.Penetrated;
-        }
-        if (hitAdvantage >= ShootingConstants.MinHitAdvantageForRicochet)
-        {
-            return ShellHitResultEnum.Ricochet;
-        }
-        return ShellHitResultEnum.ShellDestroyed;
     }
 
     protected void OnDrawGizmos()
