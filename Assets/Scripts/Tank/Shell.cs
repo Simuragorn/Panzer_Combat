@@ -34,13 +34,13 @@ public class Shell : MonoBehaviour
         collider = GetComponent<Collider2D>();
     }
 
-    public void Launch(Vector2 direction, Tank tank)
+    public void Launch(Tank tank)
     {
         ownerTank = tank;
 
         actualPenetration = originalPenetration;
         actualSpeed = originalSpeed;
-        shootingDirection = direction;
+        shootingDirection = Vector2.up;
         maxColliderDistance = Vector2.Distance(collider.bounds.min, collider.bounds.max);
         StartCoroutine(Move());
     }
@@ -80,7 +80,7 @@ public class Shell : MonoBehaviour
         {
             return;
         }
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up);
+        RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), 0, transform.up);
         RaycastHit2D? hit = hits?.FirstOrDefault(h => h.collider.gameObject == collision.gameObject);
         if (hit?.collider?.gameObject != collision.gameObject)
         {
@@ -109,6 +109,12 @@ public class Shell : MonoBehaviour
         obstacleVector = crossingVector.Value;
         Vector2 shootingVector = contactPoint - shellPosition;
         float angle = Vector2.Angle(obstacleVector, shootingVector);
+        if (angle > 90)
+        {
+            angle = 180 - angle;
+        }
+        Debug.Log($"Angle: {angle}");
+
         positionPoint = shellPosition;
 
         ManageTargetHit(target, angle);
@@ -136,7 +142,7 @@ public class Shell : MonoBehaviour
                 break;
             case ShellHitResultEnum.ShellDestroyed:
                 Debug.Log("Shell Destroyed");
-                Destroy();
+                //Destroy();
                 break;
         }
         actualPenetration -= actualPenetration * penetrationDividerLoss;

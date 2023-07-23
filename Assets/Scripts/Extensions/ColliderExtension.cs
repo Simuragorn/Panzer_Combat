@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Assets.Scripts.Helpers
 {
@@ -45,12 +46,15 @@ namespace Assets.Scripts.Helpers
         }
         private static List<Vector2> GetBoxColliderPoints(BoxCollider2D boxCollider)
         {
-            var boxBounds = boxCollider.bounds;
-            Vector2 topLeft = new Vector2(boxBounds.center.x - boxBounds.extents.x, boxBounds.center.y + boxBounds.extents.y);
-            Vector2 topRight = new Vector2(boxBounds.center.x + boxBounds.extents.x, boxBounds.center.y + boxBounds.extents.y);
-            Vector2 bottomRight = new Vector2(boxBounds.center.x + boxBounds.extents.x, boxBounds.center.y - boxBounds.extents.y);
-            Vector2 bottomLeft = new Vector2(boxBounds.center.x - boxBounds.extents.x, boxBounds.center.y - boxBounds.extents.y);
+            float top = boxCollider.offset.y + (boxCollider.size.y / 2f);
+            float btm = boxCollider.offset.y - (boxCollider.size.y / 2f);
+            float left = boxCollider.offset.x - (boxCollider.size.x / 2f);
+            float right = boxCollider.offset.x + (boxCollider.size.x / 2f);
 
+            Vector2 topLeft = boxCollider.transform.TransformPoint(new Vector2(left, top));
+            Vector2 topRight = boxCollider.transform.TransformPoint(new Vector2(right, top));
+            Vector2 bottomLeft = boxCollider.transform.TransformPoint(new Vector2(left, btm));
+            Vector2 bottomRight = boxCollider.transform.TransformPoint(new Vector2(right, btm));
             return new List<Vector2> { topLeft, topRight, bottomRight, bottomLeft };
         }
     }

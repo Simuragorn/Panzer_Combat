@@ -1,31 +1,28 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Tank))]
-public class Gun : MonoBehaviour
+public class GunController : MonoBehaviour
 {
+    [SerializeField] protected Gun gun;
+
     [SerializeField] protected Shell shellPrefab;
     [SerializeField] protected float coolDownDelayInSeconds = 1;
     [SerializeField] protected Transform launchShellPosition;
-    protected Tank tank;
-
-    protected Vector2 shootingDirection;
+    [SerializeField] protected Tank tank;
 
     protected DateTime lastShotDate;
 
-    protected void Awake()
-    {
-        tank = GetComponent<Tank>();
-        shootingDirection = Vector2.up;
-    }
-
     public void TryShoot()
     {
+        if (gun.IsDamaged)
+        {
+            return;
+        }
         TimeSpan difference = DateTime.Now - lastShotDate;
         if (difference.TotalSeconds > coolDownDelayInSeconds)
         {
-            var shell = Instantiate(shellPrefab, launchShellPosition.position, transform.localRotation);
-            shell.Launch(shootingDirection, tank);
+            var shell = Instantiate(shellPrefab, launchShellPosition.position, transform.rotation);
+            shell.Launch(tank);
             lastShotDate = DateTime.Now;
         }
     }

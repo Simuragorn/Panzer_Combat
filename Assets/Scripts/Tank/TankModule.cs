@@ -3,14 +3,18 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
+    [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
     public class TankModule : Target
     {
-        protected bool IsDamaged = false;
+        protected bool isDamaged = false;
 
         protected override void OnPenetrate()
         {
-            IsDamaged = true;
+            base.OnPenetrate();
+            isDamaged = true;
         }
+
+        public bool IsDamaged => isDamaged;
     }
 }
