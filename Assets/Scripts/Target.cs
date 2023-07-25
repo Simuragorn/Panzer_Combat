@@ -17,7 +17,7 @@ namespace Assets.Scripts
             collider = GetComponent<Collider2D>();
         }
 
-        protected float GetArmorThickness()
+        public float GetArmorThickness()
         {
             return armorThickness;
         }

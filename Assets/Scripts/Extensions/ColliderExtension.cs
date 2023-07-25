@@ -1,28 +1,41 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Assets.Scripts.Helpers
 {
     public static class ColliderExtension
     {
-        public static List<Vector2> GetColliderPoints(this Collider2D collider)
+        public static Vector2 GetColliderTopPoint(this Collider2D collider)
         {
-            var colliderPoints = new List<Vector2>();
-
+            if (collider is CapsuleCollider2D)
+            {
+                var capsuleCollider = collider as CapsuleCollider2D;
+                var topPoint = (Vector2)capsuleCollider.transform.position + Vector2.up * (capsuleCollider.size.y * 0.5f);
+                return topPoint;
+            }
             if (collider is BoxCollider2D)
             {
                 var boxCollider = collider as BoxCollider2D;
-                colliderPoints = GetBoxColliderPoints(boxCollider);
+                var topPoint = (Vector2)boxCollider.transform.position + Vector2.up * (boxCollider.size.y * 0.5f);
+                return topPoint;
+            }
+            throw new System.Exception("Unknown collider type");
+        }
+
+        public static List<Vector2> GetColliderPoints(this Collider2D collider)
+        {
+            if (collider is BoxCollider2D)
+            {
+                var boxCollider = collider as BoxCollider2D;
+                return GetBoxColliderPoints(boxCollider);
             }
 
             if (collider is PolygonCollider2D)
             {
                 var polygonCollider = collider as PolygonCollider2D;
-                colliderPoints = GetPolygonColliderPoints(polygonCollider);
+                return GetPolygonColliderPoints(polygonCollider);
             }
-
-            return colliderPoints;
+            throw new System.Exception("Unknown collider type");
         }
 
         private static List<Vector2> GetPolygonColliderPoints(PolygonCollider2D polygonCollider)

@@ -79,12 +79,9 @@ public class Shell : MonoBehaviour
         {
             return;
         }
-        RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, new Vector2(0.001f, 0.001f), 0, transform.up);
-        RaycastHit2D? hit = hits?.FirstOrDefault(h => h.collider.gameObject == collision.gameObject);
-        if (hit?.collider?.gameObject != collision.gameObject)
-        {
-            return;
-        }
+
+        Vector2 shellTip = collider.GetColliderTopPoint();
+        contactPoint = collision.ClosestPoint(shellTip);
 
         if (firstHit && target.gameObject == ownerTank.gameObject)
         {
@@ -92,7 +89,6 @@ public class Shell : MonoBehaviour
             return;
         }
         firstHit = false;
-        contactPoint = hit.Value.point;
         currentTarget = target;
     }
 
@@ -108,12 +104,12 @@ public class Shell : MonoBehaviour
         obstacleVector = crossingVector.Value;
         Vector2 shootingVector = contactPoint - shellPosition;
         float angle = Vector2.Angle(obstacleVector, shootingVector);
+        Debug.Log($"Original Angle {angle}");
         if (angle > 90)
         {
             angle = 180 - angle;
         }
-        Debug.Log($"Angle: {angle}");
-
+        angle = 90 - angle;
         positionPoint = shellPosition;
 
         ManageTargetHit(target, angle);
@@ -122,7 +118,8 @@ public class Shell : MonoBehaviour
     protected void ManageTargetHit(Target target, float hitAngle)
     {
         float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
-
+        Debug.Log($"hitAngle {hitAngle}");
+        Debug.Log($"Real Armor: {target.GetArmorThickness()}. EffectiveArmor {effectiveArmor}");
         ShellHitResultEnum hitResult = target.HitAndGetResult(this, hitAngle);
         float penetrationDividerLoss = 0;
 
