@@ -1,7 +1,5 @@
-﻿using Assets.Scripts.Constants;
-using Assets.Scripts.Enums;
+﻿using Assets.Scripts.Enums;
 using Assets.Scripts.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -35,17 +33,30 @@ namespace Assets.Scripts
         public virtual ShellHitResultEnum HitAndGetResult(Shell shell, float hitAngle)
         {
             float effectiveArmor = GetEffectiveArmorThickness(hitAngle);
-            float hitAdvantage = shell.GetActualPenetration() / effectiveArmor;
-            if (hitAdvantage >= ShootingConstants.MinHitAdvantageForPenetration)
+            if (shell.GetActualPenetration() >= effectiveArmor)
             {
                 OnPenetrate();
                 return ShellHitResultEnum.Penetrated;
             }
-            if (hitAdvantage >= ShootingConstants.MinHitAdvantageForRicochet)
+
+            if (IsRicochetHappened(hitAngle))
             {
                 return ShellHitResultEnum.Ricochet;
             }
             return ShellHitResultEnum.ShellDestroyed;
+        }
+
+        protected bool IsRicochetHappened(float hitAngle)
+        {
+            if (hitAngle == 0)
+            {
+                hitAngle = 90;
+            }
+            int angleImpact = (int)(100 / (hitAngle / 10));
+
+            var random = new System.Random();
+            int randomRicochetPossibility = random.Next(0, 101);
+            return randomRicochetPossibility + angleImpact > 70;
         }
 
         protected virtual void OnPenetrate()

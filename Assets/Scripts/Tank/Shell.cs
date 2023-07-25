@@ -1,5 +1,4 @@
 using Assets.Scripts;
-using Assets.Scripts.Constants;
 using Assets.Scripts.Enums;
 using Assets.Scripts.Helpers;
 using System.Collections;
@@ -80,7 +79,7 @@ public class Shell : MonoBehaviour
         {
             return;
         }
-        RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, new Vector2(collider.bounds.extents.x, collider.bounds.extents.y), 0, transform.up);
+        RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, new Vector2(0.001f, 0.001f), 0, transform.up);
         RaycastHit2D? hit = hits?.FirstOrDefault(h => h.collider.gameObject == collision.gameObject);
         if (hit?.collider?.gameObject != collision.gameObject)
         {
@@ -142,7 +141,7 @@ public class Shell : MonoBehaviour
                 break;
             case ShellHitResultEnum.ShellDestroyed:
                 Debug.Log("Shell Destroyed");
-                //Destroy();
+                Destroy();
                 break;
         }
         actualPenetration -= actualPenetration * penetrationDividerLoss;

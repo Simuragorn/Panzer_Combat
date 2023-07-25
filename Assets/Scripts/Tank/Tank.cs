@@ -5,8 +5,7 @@ using UnityEngine;
 public class Tank : MonoBehaviour
 {
     [SerializeField] protected List<Armor> armors;
-    [SerializeField] protected EngineController engine;
-    [SerializeField] protected TrackController trackController;
+    [SerializeField] protected MovementController movementController;
     [SerializeField] protected GunController gun;
 
     public void Shoot()
@@ -16,11 +15,11 @@ public class Tank : MonoBehaviour
 
     public void Move(float verticalAxisInput)
     {
-        engine.Move(verticalAxisInput);
+        movementController.Move(verticalAxisInput);
     }
 
     public void Rotate(float horizontalAxisInput)
     {
-        trackController.Rotate(horizontalAxisInput);
+        movementController.Rotate(horizontalAxisInput);
     }
 }

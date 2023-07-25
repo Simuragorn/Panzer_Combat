@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Helpers
 {
     public static class VectorExtension
-    {        
+    {
         public static bool IsLaysBetweenPoints(this Vector3 targetPoint, Vector3 startPoint, Vector3 endPoint)
         {
             Vector3 endToStart = endPoint - startPoint;
@@ -15,9 +16,8 @@ namespace Assets.Scripts.Helpers
             if (!colinear)
                 return false;
 
-            float epsilon = 0.0001f;
-            bool suitableMagnitude = targetToStart.magnitude <= endToStart.magnitude + epsilon;
-
+            float epsilon = 0.1f;
+            bool suitableMagnitude = Math.Abs(targetToStart.magnitude - endToStart.magnitude) < epsilon;
             if (!suitableMagnitude)
                 return false;
 

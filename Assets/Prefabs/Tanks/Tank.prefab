@@ -29,7 +29,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3443486088052697131}
-  - {fileID: 4012074565255087655}
   - {fileID: 8393332919211879694}
   m_Father: {fileID: 6974645143716493787}
   m_RootOrder: 2
@@ -481,8 +480,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4012074565255087655}
-  m_RootOrder: 0
+  m_Father: {fileID: 3443486088052697131}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &8636593197063197440
 BoxCollider2D:
@@ -676,8 +675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   armors: []
-  engine: {fileID: 1334682378757707599}
-  trackController: {fileID: 6491731193685586682}
+  movementController: {fileID: 6491731193685586682}
   gun: {fileID: 421664674804671684}
 --- !u!1 &7568517035948256018
 GameObject:
@@ -784,7 +782,7 @@ GameObject:
   - component: {fileID: 3443486088052697131}
   - component: {fileID: 6491731193685586682}
   m_Layer: 0
-  m_Name: TracksController
+  m_Name: MovementController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -804,6 +802,7 @@ Transform:
   m_Children:
   - {fileID: 8946411865808259392}
   - {fileID: 3494309818354321893}
+  - {fileID: 1478035542225268763}
   m_Father: {fileID: 7452295554307010143}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -822,56 +821,10 @@ MonoBehaviour:
   tracks:
   - {fileID: 5272586173319745812}
   - {fileID: 6115177074148711248}
-  originalTorque: 5
+  originalTorque: 15
   tankRigidbody: {fileID: 7150501541456895354}
---- !u!1 &7841902041802698937
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4012074565255087655}
-  - component: {fileID: 1334682378757707599}
-  m_Layer: 0
-  m_Name: EngineController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4012074565255087655
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7841902041802698937}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1478035542225268763}
-  m_Father: {fileID: 7452295554307010143}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1334682378757707599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7841902041802698937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d115f2d6ce7664419c59386cbb11318, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   engine: {fileID: 422862383001144237}
-  originalPower: 15
-  tankRigidbody: {fileID: 7150501541456895354}
+  originalPower: 50
 --- !u!1 &8353566975217182598
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +929,7 @@ Transform:
   - {fileID: 4059829194532410572}
   - {fileID: 5840443221546465918}
   m_Father: {fileID: 7452295554307010143}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &421664674804671684
 MonoBehaviour:
