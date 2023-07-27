@@ -24,6 +24,10 @@ namespace Assets.Scripts
 
         public float GetEffectiveArmorThickness(float hitAngle)
         {
+            if (hitAngle == 90)
+            {
+                return float.MaxValue;
+            }
             float armorThickness = GetArmorThickness();
             float divider = Mathf.Cos(hitAngle * Mathf.Deg2Rad);
             float effectiveArmor = armorThickness / divider;
@@ -46,11 +50,11 @@ namespace Assets.Scripts
             return ShellHitResultEnum.ShellDestroyed;
         }
 
-        protected bool IsRicochetHappened(float hitAngle)
+        protected virtual bool IsRicochetHappened(float hitAngle)
         {
             if (hitAngle == 0)
             {
-                hitAngle = 90;
+                return true;
             }
             int angleImpact = (int)(100 / (hitAngle / 10));
 

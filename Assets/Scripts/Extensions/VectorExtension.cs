@@ -16,7 +16,7 @@ namespace Assets.Scripts.Helpers
             if (!colinear)
                 return false;
 
-            float epsilon = 0.0001f;
+            float epsilon = 0.01f;
             bool suitableMagnitude = targetToStart.magnitude <= endToStart.magnitude + epsilon;
             if (!suitableMagnitude)
                 return false;

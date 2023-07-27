@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
         keyShoot = playerKeyShoot;
     }
 
+    public Vector2 TankPosition => tank.transform.position;
+
     protected void FixedUpdate()
     {
         Shooting();
