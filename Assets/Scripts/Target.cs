@@ -37,7 +37,6 @@ namespace Assets.Scripts
 
         public virtual ShellHitResultEnum HitAndGetResult(Shell shell, float hitAngle)
         {
-            return ShellHitResultEnum.Ricochet;
             float effectiveArmor = GetEffectiveArmorThickness(hitAngle);
             if (shell.GetActualPenetration() >= effectiveArmor)
             {
