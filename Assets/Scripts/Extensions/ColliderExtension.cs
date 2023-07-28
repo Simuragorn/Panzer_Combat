@@ -5,6 +5,21 @@ namespace Assets.Scripts.Helpers
 {
     public static class ColliderExtension
     {
+        public static Vector2 GetNormalTowardsCenter(this Collider2D collider, Vector2 contactPoint, Vector2 sideVector)
+        {
+            var sideNormalVector1 = new Vector2(sideVector.y, -sideVector.x);
+            var sideNormalVector2 = new Vector2(-sideVector.y, sideVector.x);
+
+            float offset = 0.1f;
+            var neededNormal = sideNormalVector1;
+            var offsetPoint = contactPoint + sideNormalVector2 * offset;
+            if (collider.bounds.Contains(offsetPoint))
+            {
+                neededNormal = sideNormalVector2;
+            }
+            return neededNormal;
+        }
+
         public static Vector2 GetColliderTopPoint(this Collider2D collider)
         {
             if (collider is CapsuleCollider2D)

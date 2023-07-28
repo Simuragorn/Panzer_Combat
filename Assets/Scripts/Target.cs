@@ -11,6 +11,7 @@ namespace Assets.Scripts
     {
         [SerializeField] protected float armorThickness = 30;
         protected new Collider2D collider;
+        public Collider2D Collider => collider;
 
         protected virtual void Awake()
         {
@@ -75,6 +76,10 @@ namespace Assets.Scripts
 
         private void OnDrawGizmosSelected()
         {
+            if (collider == null)
+            {
+                return;
+            }
             var colliderPoints = collider.GetColliderPoints();
             if (!(colliderPoints?.Any() ?? false))
             {

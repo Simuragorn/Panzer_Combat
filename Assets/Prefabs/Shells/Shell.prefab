@@ -149,6 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalSpeed: 10
   originalPenetration: 1
+  inSideNormalVector: {x: 0, y: 0}
 --- !u!50 &6583594635730046766
 Rigidbody2D:
   serializedVersion: 4

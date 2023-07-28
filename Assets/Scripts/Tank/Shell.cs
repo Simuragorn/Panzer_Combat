@@ -25,6 +25,7 @@ public class Shell : MonoBehaviour
     protected Vector2 contactPoint;
     protected Vector2 positionPoint;
     protected Vector2 obstacleVector;
+    public Vector2 inSideNormalVector;
 
     protected Target currentTarget;
 
@@ -81,7 +82,13 @@ public class Shell : MonoBehaviour
         }
 
         Vector2 shellTip = collider.GetColliderTopPoint();
-        contactPoint = collision.ClosestPoint(shellTip);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up);
+        var neededHit = hits.FirstOrDefault(h => h.collider.gameObject == target.gameObject);
+        if (neededHit.collider == null)
+        {
+            return;
+        }
+        contactPoint = neededHit.point;
 
         if (firstHit && target.gameObject == ownerTank.gameObject)
         {
@@ -99,16 +106,23 @@ public class Shell : MonoBehaviour
         Vector2? crossingVector = VectorHelper.FindVectorThatCrossesTargetPoint(colliderPoints, contactPoint);
         if (!crossingVector.HasValue)
         {
+            Debug.Log("Didn't crossed");
             return;
         }
         obstacleVector = crossingVector.Value;
-        Vector2 shootingVector = contactPoint - shellPosition;
-        float angle = Vector2.Angle(obstacleVector, shootingVector);
-        Debug.Log($"Original Angle {angle}");
-        if (angle > 90)
+        Vector2 shootingVector1 = contactPoint - shellPosition;
+        Vector2 shootingVector2 = shellPosition - contactPoint;
+
+        inSideNormalVector = target.Collider.GetNormalTowardsCenter(contactPoint, obstacleVector);
+        float angle = Vector2.Angle(obstacleVector, shootingVector1);
+        float shootingAngle1 = Vector2.Angle(shootingVector1, inSideNormalVector);
+        float shootingAngle2 = Vector2.Angle(shootingVector2, inSideNormalVector);
+        if (shootingAngle2 > shootingAngle1)
         {
-            angle = 180 - angle;
+            angle = Vector2.Angle(obstacleVector, shootingVector2);
         }
+        
+        Debug.Log(angle);
         angle = 90 - angle;
         positionPoint = shellPosition;
 
@@ -118,9 +132,9 @@ public class Shell : MonoBehaviour
     protected void ManageTargetHit(Target target, float hitAngle)
     {
         float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
-        Debug.Log($"hitAngle {hitAngle}");
         Debug.Log($"Real Armor: {target.GetArmorThickness()}. EffectiveArmor {effectiveArmor}");
         ShellHitResultEnum hitResult = target.HitAndGetResult(this, hitAngle);
+        hitResult = ShellHitResultEnum.Ricochet;
         float penetrationDividerLoss = 0;
 
         switch (hitResult)
@@ -130,10 +144,8 @@ public class Shell : MonoBehaviour
                 break;
             case ShellHitResultEnum.Ricochet:
                 penetrationDividerLoss = actualPenetration / effectiveArmor;
-                Vector3 currentRotation = transform.rotation.eulerAngles;
-                float rotationAngle = 2 * hitAngle;
-                currentRotation.z -= rotationAngle;
-                transform.rotation = Quaternion.Euler(currentRotation);
+                float angleAfterRotation = 2 * hitAngle;
+                transform.rotation = Quaternion.Euler(0, 0, angleAfterRotation);
                 Debug.Log("Ricochet");
                 break;
             case ShellHitResultEnum.ShellDestroyed:
@@ -155,5 +167,8 @@ public class Shell : MonoBehaviour
 
         Gizmos.color = Color.magenta;
         Gizmos.DrawLine(obstacleVector, obstacleVector * 0.5f);
+
+        Gizmos.color = Color.white;
+        Gizmos.DrawLine(inSideNormalVector, inSideNormalVector * 0.5f);
     }
 }
