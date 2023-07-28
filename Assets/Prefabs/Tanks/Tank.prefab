@@ -729,7 +729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gun: {fileID: 7447798235802129901}
   shellPrefab: {fileID: 8641572344117458549, guid: 54cfd13d4fe56d9418782f37c9f82544, type: 3}
-  coolDownDelayInSeconds: 5
+  coolDownDelayInSeconds: 1
   launchShellPosition: {fileID: 5528882047291788874}
   tank: {fileID: 6940363091011340562}
 --- !u!1 &7951721006534546354

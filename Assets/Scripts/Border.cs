@@ -1,11 +1,12 @@
 using Assets.Scripts;
+using Assets.Scripts.Enums;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Border : Target
 {
-    protected override bool IsRicochetHappened(float hitAngle)
+    public override ShellHitResultEnum HitAndGetResult(Shell shell, float hitAngle)
     {
-        return false;
+        return ShellHitResultEnum.ShellDestroyed;
     }
 }

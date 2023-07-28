@@ -25,7 +25,7 @@ namespace Assets.Scripts.Helpers
             if (collider is CapsuleCollider2D)
             {
                 var capsuleCollider = collider as CapsuleCollider2D;
-                var topPoint = (Vector2)capsuleCollider.transform.position + Vector2.up * (capsuleCollider.size.y * 0.5f);
+                var topPoint = (Vector2)capsuleCollider.transform.position + (Vector2)capsuleCollider.transform.up * (capsuleCollider.size.y * 0.5f);
                 return topPoint;
             }
             if (collider is BoxCollider2D)

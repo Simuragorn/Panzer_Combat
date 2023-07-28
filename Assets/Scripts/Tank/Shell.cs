@@ -25,7 +25,8 @@ public class Shell : MonoBehaviour
     protected Vector2 contactPoint;
     protected Vector2 positionPoint;
     protected Vector2 obstacleVector;
-    public Vector2 inSideNormalVector;
+    protected Vector2 inSideNormalVector;
+
 
     protected Target currentTarget;
 
@@ -80,9 +81,7 @@ public class Shell : MonoBehaviour
         {
             return;
         }
-
-        Vector2 shellTip = collider.GetColliderTopPoint();
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, transform.up);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(collider.transform.position, transform.up);
         var neededHit = hits.FirstOrDefault(h => h.collider.gameObject == target.gameObject);
         if (neededHit.collider == null)
         {
@@ -121,7 +120,7 @@ public class Shell : MonoBehaviour
         {
             angle = Vector2.Angle(obstacleVector, shootingVector2);
         }
-        
+
         Debug.Log(angle);
         angle = 90 - angle;
         positionPoint = shellPosition;
@@ -134,7 +133,6 @@ public class Shell : MonoBehaviour
         float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
         Debug.Log($"Real Armor: {target.GetArmorThickness()}. EffectiveArmor {effectiveArmor}");
         ShellHitResultEnum hitResult = target.HitAndGetResult(this, hitAngle);
-        hitResult = ShellHitResultEnum.Ricochet;
         float penetrationDividerLoss = 0;
 
         switch (hitResult)
@@ -162,13 +160,13 @@ public class Shell : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(contactPoint, 0.7f);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(positionPoint, 0.7f);
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawWireSphere(positionPoint, 0.7f);
 
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawLine(obstacleVector, obstacleVector * 0.5f);
+        //Gizmos.color = Color.magenta;
+        //Gizmos.DrawLine(obstacleVector, obstacleVector * 0.5f);
 
-        Gizmos.color = Color.white;
-        Gizmos.DrawLine(inSideNormalVector, inSideNormalVector * 0.5f);
+        //Gizmos.color = Color.white;
+        //Gizmos.DrawLine(inSideNormalVector, inSideNormalVector * 0.5f);
     }
 }
