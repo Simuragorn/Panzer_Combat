@@ -35,30 +35,31 @@ namespace Assets.Scripts
             return effectiveArmor;
         }
 
-        public virtual ShellHitResultEnum HitAndGetResult(Shell shell, float hitAngle)
+        public virtual ShellHitResultEnum HitAndGetResult(Shell shell, float impactAngle)
         {
-            float effectiveArmor = GetEffectiveArmorThickness(hitAngle);
+            float effectiveArmor = GetEffectiveArmorThickness(impactAngle);
             if (shell.GetActualPenetration() >= effectiveArmor)
             {
                 OnPenetrate();
                 return ShellHitResultEnum.Penetrated;
             }
 
-            if (IsRicochetHappened(hitAngle))
+            if (IsRicochetHappened(impactAngle))
             {
                 return ShellHitResultEnum.Ricochet;
             }
             return ShellHitResultEnum.ShellDestroyed;
         }
 
-        protected virtual bool IsRicochetHappened(float hitAngle)
+        protected virtual bool IsRicochetHappened(float impactAngle)
         {
+            float hitAngle = 90 - Mathf.Abs(impactAngle);
             if (hitAngle == 0)
             {
                 return true;
             }
             int angleImpact = (int)(100 / (hitAngle / 10));
-
+            Debug.Log(hitAngle);
             var random = new System.Random();
             int randomRicochetPossibility = random.Next(0, 101);
             return randomRicochetPossibility + angleImpact > 70;

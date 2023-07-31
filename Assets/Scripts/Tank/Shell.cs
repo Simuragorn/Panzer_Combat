@@ -110,8 +110,6 @@ public class Shell : MonoBehaviour
         }
         obstacleVector = crossingVector.Value;
         Vector2 shootingVector = shellPosition - contactPoint;
-
-        inSideNormalVector = target.Collider.GetNormalTowardsCenter(contactPoint, obstacleVector);
         float angle = Vector2.Angle(obstacleVector, shootingVector);
         angle = 90 - angle;
         positionPoint = shellPosition;
@@ -119,11 +117,11 @@ public class Shell : MonoBehaviour
         ManageTargetHit(target, angle);
     }
 
-    protected void ManageTargetHit(Target target, float hitAngle)
+    protected void ManageTargetHit(Target target, float impactAngle)
     {
-        float effectiveArmor = target.GetEffectiveArmorThickness(hitAngle);
+        float effectiveArmor = target.GetEffectiveArmorThickness(impactAngle);
         Debug.Log($"Real Armor: {target.GetArmorThickness()}. EffectiveArmor {effectiveArmor}");
-        ShellHitResultEnum hitResult = target.HitAndGetResult(this, hitAngle);
+        ShellHitResultEnum hitResult = target.HitAndGetResult(this, impactAngle);
         float penetrationDividerLoss = 0;
 
         switch (hitResult)
@@ -133,7 +131,7 @@ public class Shell : MonoBehaviour
                 break;
             case ShellHitResultEnum.Ricochet:
                 penetrationDividerLoss = actualPenetration / effectiveArmor;
-                float angleAfterRotation = 2 * hitAngle;
+                float angleAfterRotation = 2 * impactAngle;
                 transform.rotation = Quaternion.Euler(0, 0, angleAfterRotation);
                 Debug.Log("Ricochet");
                 break;
