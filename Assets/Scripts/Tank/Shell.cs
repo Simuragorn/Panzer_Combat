@@ -109,19 +109,10 @@ public class Shell : MonoBehaviour
             return;
         }
         obstacleVector = crossingVector.Value;
-        Vector2 shootingVector1 = contactPoint - shellPosition;
-        Vector2 shootingVector2 = shellPosition - contactPoint;
+        Vector2 shootingVector = shellPosition - contactPoint;
 
         inSideNormalVector = target.Collider.GetNormalTowardsCenter(contactPoint, obstacleVector);
-        float angle = Vector2.Angle(obstacleVector, shootingVector1);
-        float shootingAngle1 = Vector2.Angle(shootingVector1, inSideNormalVector);
-        float shootingAngle2 = Vector2.Angle(shootingVector2, inSideNormalVector);
-        if (shootingAngle2 > shootingAngle1)
-        {
-            angle = Vector2.Angle(obstacleVector, shootingVector2);
-        }
-
-        Debug.Log(angle);
+        float angle = Vector2.Angle(obstacleVector, shootingVector);
         angle = 90 - angle;
         positionPoint = shellPosition;
 
