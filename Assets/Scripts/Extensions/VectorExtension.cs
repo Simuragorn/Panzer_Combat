@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Helpers
@@ -10,9 +9,9 @@ namespace Assets.Scripts.Helpers
         {
             Vector3 endToStart = endPoint - startPoint;
             Vector3 targetToStart = targetPoint - startPoint;
-            var angle = Vector2.Angle(endToStart, targetToStart);
-            var crossVector = Vector3.Cross(targetToStart.normalized, endToStart.normalized);
-            bool colinear = Mathf.Abs(crossVector.x) < 0.1 && Mathf.Abs(crossVector.y) < 0.1 && Mathf.Abs(crossVector.z) < 0.1;
+            float dotValue = Vector3.Dot(targetToStart.normalized, endToStart.normalized);
+
+            bool colinear = Math.Abs(1 - Math.Abs(dotValue)) < 0.1;
             if (!colinear)
                 return false;
 
