@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     protected GameController gameController;
     protected bool isGameOver = false;
 
-    protected void Start()
+    protected virtual void Start()
     {
         gameController = FindObjectOfType<GameController>();
         gameController.onGameOver += GameOver;

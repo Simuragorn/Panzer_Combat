@@ -5,13 +5,23 @@ using UnityEngine;
 
 public class Tank : MonoBehaviour
 {
-    [SerializeField] protected List<Armor> armors;
-    [SerializeField] protected MovementController movementController;
-    [SerializeField] protected ShootingController gun;
-
     public delegate void OnTankDestroyed();
     public event OnTankDestroyed onTankDestroyed;
+    public bool IsHuman => isHuman;
+
+    [SerializeField] protected List<Armor> armors;
+    [SerializeField] protected MovementController movementController;
+    [SerializeField] protected ShootingController shootingController;
+    [SerializeField] protected ViewController viewController;
+    
+    protected bool isHuman;
     protected bool isTankDestroyed = false;
+
+    public void Init(bool isHuman)
+    {
+        this.isHuman = isHuman;
+        viewController.Init(isHuman);
+    }
 
     private void Start()
     {
@@ -21,7 +31,7 @@ public class Tank : MonoBehaviour
 
     public void Shoot()
     {
-        gun.TryShoot();
+        shootingController.TryShoot();
     }
 
     public void Move(float verticalAxisInput)

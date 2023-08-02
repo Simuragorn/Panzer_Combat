@@ -102,6 +102,7 @@ Transform:
   m_Children:
   - {fileID: 3638447382462503967}
   - {fileID: 7623748740359559482}
+  - {fileID: 4014172276646348393}
   m_Father: {fileID: 9042399061589495279}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -672,6 +673,67 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   armorThickness: 30
+--- !u!1 &6746531835612041416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4014172276646348393}
+  - component: {fileID: 228501745695051616}
+  - component: {fileID: 7957096093674112478}
+  m_Layer: 12
+  m_Name: ViewController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4014172276646348393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6746531835612041416}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8853016479267871339}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &228501745695051616
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6746531835612041416}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 7
+--- !u!114 &7957096093674112478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6746531835612041416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef83a27b735ac0c45ba9589f04e30a66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7421171632117616295
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,7 +1218,7 @@ GameObject:
   - component: {fileID: 9118746375401122126}
   - component: {fileID: 405467089650816044}
   - component: {fileID: 6940363091011340562}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Tank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1246,4 +1308,5 @@ MonoBehaviour:
   - {fileID: 6486953422619848427}
   - {fileID: 1638193773369109357}
   movementController: {fileID: 5161309787810580174}
-  gun: {fileID: 1760319276160504048}
+  shootingController: {fileID: 1760319276160504048}
+  viewController: {fileID: 7957096093674112478}

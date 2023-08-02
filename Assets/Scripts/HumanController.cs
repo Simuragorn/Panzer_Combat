@@ -16,6 +16,8 @@ public class HumanController : PlayerController
         keyTop = playerKeyTop;
         keyDown = playerKeyDown;
         keyShoot = playerKeyShoot;
+
+        tank.Init(true);
     }
 
     protected override void Shooting()
