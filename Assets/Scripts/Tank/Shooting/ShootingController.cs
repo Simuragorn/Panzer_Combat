@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 
-public class GunController : MonoBehaviour
+public class ShootingController : MonoBehaviour
 {
     [SerializeField] protected Gun gun;
+    [SerializeField] protected AmmoRack ammoRack;
 
     [SerializeField] protected Shell shellPrefab;
     [SerializeField] protected float coolDownDelayInSeconds = 1;

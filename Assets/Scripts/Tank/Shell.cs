@@ -109,8 +109,19 @@ public class Shell : MonoBehaviour
             return;
         }
         obstacleVector = crossingVector.Value;
-        Vector2 shootingVector = shellPosition - contactPoint;
-        float angle = Vector2.Angle(obstacleVector, shootingVector);
+        Vector2 shootingVector1 = contactPoint - shellPosition;
+        Vector2 shootingVector2 = shellPosition - contactPoint;
+
+        inSideNormalVector = target.Collider.GetNormalTowardsCenter(contactPoint, obstacleVector);
+        float angle = Vector2.Angle(obstacleVector, shootingVector1);
+        float shootingAngle1 = Vector2.Angle(shootingVector1, inSideNormalVector);
+        float shootingAngle2 = Vector2.Angle(shootingVector2, inSideNormalVector);
+        if (shootingAngle2 > shootingAngle1)
+        {
+            angle = Vector2.Angle(obstacleVector, shootingVector2);
+        }
+
+        //Debug.Log(angle);
         angle = 90 - angle;
         positionPoint = shellPosition;
 
@@ -120,7 +131,7 @@ public class Shell : MonoBehaviour
     protected void ManageTargetHit(Target target, float impactAngle)
     {
         float effectiveArmor = target.GetEffectiveArmorThickness(impactAngle);
-        Debug.Log($"Real Armor: {target.GetArmorThickness()}. EffectiveArmor {effectiveArmor}");
+        //Debug.Log($"Real Armor: {target.GetArmorThickness()}. EffectiveArmor {effectiveArmor}");
         ShellHitResultEnum hitResult = target.HitAndGetResult(this, impactAngle);
         float penetrationDividerLoss = 0;
 
@@ -133,10 +144,10 @@ public class Shell : MonoBehaviour
                 penetrationDividerLoss = actualPenetration / effectiveArmor;
                 float angleAfterRotation = 2 * impactAngle;
                 transform.rotation = Quaternion.Euler(0, 0, angleAfterRotation);
-                Debug.Log("Ricochet");
+                //Debug.Log("Ricochet");
                 break;
             case ShellHitResultEnum.ShellDestroyed:
-                Debug.Log("Shell Destroyed");
+                //Debug.Log("Shell Destroyed");
                 Destroy();
                 break;
         }

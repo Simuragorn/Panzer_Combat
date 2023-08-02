@@ -5,6 +5,7 @@ using UnityEngine;
 public class MovementController : MonoBehaviour
 {
     [SerializeField] protected List<Track> tracks;
+    [SerializeField] protected FuelTank fuelTank;
     [SerializeField] protected int originalTorque = 5;
     [SerializeField] protected Rigidbody2D tankRigidbody;
     protected int actualTorque;

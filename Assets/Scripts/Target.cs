@@ -59,7 +59,7 @@ namespace Assets.Scripts
                 return true;
             }
             int angleImpact = (int)(100 / (hitAngle / 10));
-            Debug.Log(hitAngle);
+            //Debug.Log(hitAngle);
             var random = new System.Random();
             int randomRicochetPossibility = random.Next(0, 101);
             return randomRicochetPossibility + angleImpact > 70;
@@ -67,7 +67,7 @@ namespace Assets.Scripts
 
         protected virtual void OnPenetrate()
         {
-            Debug.Log("Penetrated!");
+            //Debug.Log("Penetrated!");
         }
 
         public List<Vector2> GetColliderPoints()

@@ -2,65 +2,46 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] protected Tank tank;
-
-    protected KeyCode keyLeft;
-    protected KeyCode keyRight;
-    protected KeyCode keyTop;
-    protected KeyCode keyDown;
-    protected KeyCode keyShoot;
-
-    public void Init(KeyCode playerKeyLeft, KeyCode playerKeyRight, KeyCode playerKeyTop, KeyCode playerKeyDown, KeyCode playerKeyShoot)
-    {
-        keyLeft = playerKeyLeft;
-        keyRight = playerKeyRight;
-        keyTop = playerKeyTop;
-        keyDown = playerKeyDown;
-        keyShoot = playerKeyShoot;
-    }
-
+    public delegate void OnGameOver();
+    public event OnGameOver onGameOver;
     public Vector2 TankPosition => tank.transform.position;
+
+    [SerializeField] protected Tank tank;
+    protected GameController gameController;
+    protected bool isGameOver = false;
+
+    protected void Start()
+    {
+        gameController = FindObjectOfType<GameController>();
+        gameController.onGameOver += GameOver;
+        tank.onTankDestroyed += GameOver;
+    }
 
     protected void FixedUpdate()
     {
+        if (isGameOver)
+        {
+            return;
+        }
         Shooting();
         Movement();
     }
 
-    protected void Shooting()
+    protected virtual void Shooting()
     {
-        if (Input.GetKey(keyShoot))
-        {
-            tank.Shoot();
-        }
     }
 
-    protected void Movement()
+    protected virtual void Movement()
     {
-        float verticalAxis = 0;
-        if (Input.GetKey(keyTop))
-        {
-            verticalAxis = 1;
-        }
-        else if (Input.GetKey(keyDown))
-        {
-            verticalAxis = -1;
-        }
-        tank.Move(verticalAxis);
 
-        float horizontalAxis = 0;
-        if (Input.GetKey(keyRight))
+    }
+
+    public void GameOver()
+    {
+        if (!isGameOver)
         {
-            horizontalAxis = 1;
+            isGameOver = true;
+            onGameOver?.Invoke();
         }
-        else if (Input.GetKey(keyLeft))
-        {
-            horizontalAxis = -1;
-        }
-        if (verticalAxis < 0)
-        {
-            horizontalAxis *= -1;
-        }
-        tank.Rotate(horizontalAxis);
     }
 }

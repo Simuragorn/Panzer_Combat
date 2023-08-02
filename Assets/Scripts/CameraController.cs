@@ -4,11 +4,11 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private float offsetSmoothing;
     [SerializeField] private float zoomSensitivity;
-    private PlayerController playerController;
+    private HumanController playerController;
     private Camera camera;
     void Start()
     {
-        playerController = FindObjectOfType<PlayerController>();
+        playerController = FindObjectOfType<HumanController>();
         camera = FindObjectOfType<Camera>();
     }
 
