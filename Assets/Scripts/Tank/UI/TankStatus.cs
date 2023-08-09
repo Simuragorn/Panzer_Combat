@@ -75,26 +75,26 @@ public class TankStatus : MonoBehaviour
 
     protected void ObserveTrackModule(Track track)
     {
-        track.onModuleStatusChanged += TrackStatusChanged;
+        track.OnModuleStatusChanged.AddListener(TrackStatusChanged);
     }
 
     protected void ObserveEngineModule(Engine engine)
     {
-        engine.onModuleStatusChanged += EngineStatusChanged;
+        engine.OnModuleStatusChanged.AddListener(EngineStatusChanged);
     }
 
     protected void ObserveGunModule(Gun gun)
     {
-        gun.onModuleStatusChanged += GunStatusChanged;
+        gun.OnModuleStatusChanged.AddListener(GunStatusChanged);
     }
 
     protected void ObserveAmmoRackModule(AmmoRack ammoRack)
     {
-        ammoRack.onModuleStatusChanged += AmmoRackStatusChanged;
+        ammoRack.OnModuleStatusChanged.AddListener(AmmoRackStatusChanged);
     }
 
     protected void ObserveFuelTankModule(FuelTank fuelTank)
     {
-        fuelTank.onModuleStatusChanged += FuelTankStatusChanged;
+        fuelTank.OnModuleStatusChanged.AddListener(FuelTankStatusChanged);
     }
 }

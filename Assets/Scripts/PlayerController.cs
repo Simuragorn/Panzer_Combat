@@ -1,9 +1,9 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
-    public delegate void OnGameOver();
-    public event OnGameOver onGameOver;
+    public UnityEvent OnGameOver = new();
     public Vector2 TankPosition => tank.transform.position;
 
     [SerializeField] protected Tank tank;
@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour
     protected virtual void Start()
     {
         gameController = FindObjectOfType<GameController>();
-        gameController.onGameOver += GameOver;
-        tank.onTankDestroyed += GameOver;
+        gameController.OnGameOver.AddListener(GameOver);
+        tank.OnTankDestroyed.AddListener(GameOver);
     }
 
     protected void FixedUpdate()
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
         if (!isGameOver)
         {
             isGameOver = true;
-            onGameOver?.Invoke();
+            OnGameOver?.Invoke();
         }
     }
 }

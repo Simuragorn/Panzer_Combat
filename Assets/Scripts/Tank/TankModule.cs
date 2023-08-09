@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts
 {
@@ -6,8 +7,7 @@ namespace Assets.Scripts
     [RequireComponent(typeof(Collider2D))]
     public class TankModule : Target
     {
-        public delegate void OnModuleStatusChanged(bool isDamaged);
-        public event OnModuleStatusChanged onModuleStatusChanged;
+        public UnityEvent<bool> OnModuleStatusChanged;
 
         protected bool isDamaged = false;
 
@@ -15,7 +15,7 @@ namespace Assets.Scripts
         {
             base.OnPenetrate();
             isDamaged = true;
-            onModuleStatusChanged?.Invoke(isDamaged);
+            OnModuleStatusChanged?.Invoke(isDamaged);
         }
 
         public bool IsDamaged => isDamaged;

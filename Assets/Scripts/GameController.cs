@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameController : MonoBehaviour
 {
-    public delegate void OnGameOver();
-    public event OnGameOver onGameOver;
+    public UnityEvent OnGameOver = new();
 
     private HumanController human;
     private List<BotController> bots;
@@ -19,12 +19,12 @@ public class GameController : MonoBehaviour
     {
         human.Init(KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S, KeyCode.LeftControl);
 
-        human.onGameOver += GameOver;
+        human.OnGameOver.AddListener(GameOver);
     }
 
     protected void GameOver()
     {
         Debug.Log("Game Over");
-        onGameOver?.Invoke();
+        OnGameOver?.Invoke();
     }
 }

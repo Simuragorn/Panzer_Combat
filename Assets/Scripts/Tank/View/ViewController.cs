@@ -1,10 +1,10 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(CircleCollider2D))]
 public class ViewController : MonoBehaviour
 {
-    public delegate void OnEnemyTargetChanged(Tank tank);
-    public event OnEnemyTargetChanged onEnemyTargetChanged;
+    public UnityEvent<Tank> OnEnemyTargetChanged = new();
 
     protected Tank enemyTarget;
     protected CircleCollider2D viewCollider;
@@ -25,7 +25,7 @@ public class ViewController : MonoBehaviour
         if (TrySetNewTarget(tank))
         {
             enemyTarget = tank;
-            onEnemyTargetChanged?.Invoke(enemyTarget);
+            OnEnemyTargetChanged?.Invoke(enemyTarget);
         }
     }
 
@@ -39,7 +39,7 @@ public class ViewController : MonoBehaviour
         if (enemyTarget == tank)
         {
             enemyTarget = null;
-            onEnemyTargetChanged?.Invoke(enemyTarget);
+            OnEnemyTargetChanged?.Invoke(enemyTarget);
         }
     }
 

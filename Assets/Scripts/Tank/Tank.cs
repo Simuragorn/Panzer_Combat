@@ -2,11 +2,11 @@ using Assets.Scripts;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Tank : MonoBehaviour
 {
-    public delegate void OnTankDestroyed();
-    public event OnTankDestroyed onTankDestroyed;
+    public UnityEvent OnTankDestroyed = new();
     public bool IsHuman => isHuman;
 
     [SerializeField] protected List<Armor> armors;
@@ -26,7 +26,7 @@ public class Tank : MonoBehaviour
     private void Start()
     {
         var vitalTankModules = GetComponentsInChildren<VitalTankModule>().ToList();
-        vitalTankModules.ForEach(vitalModule => vitalModule.onModuleStatusChanged += VitalModuleStatusChanged);
+        vitalTankModules.ForEach(vitalModule => vitalModule.OnModuleStatusChanged.AddListener(VitalModuleStatusChanged));
     }
 
     public void Shoot()
@@ -48,7 +48,7 @@ public class Tank : MonoBehaviour
     {
         if (!isTankDestroyed)
         {
-            onTankDestroyed?.Invoke();
+            OnTankDestroyed?.Invoke();
             isTankDestroyed = true;
         }
     }

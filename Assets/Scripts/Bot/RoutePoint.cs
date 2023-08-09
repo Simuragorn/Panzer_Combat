@@ -18,7 +18,7 @@ public class RoutePoint : MonoBehaviour
         Tank tank = collision.gameObject.GetComponent<Tank>();
         if (tank != null && !tank.IsHuman)
         {
-            var botRouteBuilder = tank.GetComponentInParent<BotRouteBuilder>();
+            var botRouteBuilder = tank.GetComponentInParent<RouteBuilder>();
             botRouteBuilder.PointReached(pointPosition);
         }
     }

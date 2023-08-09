@@ -3,13 +3,20 @@ using UnityEngine;
 public class BotController : PlayerController
 {
     protected ViewController viewController;
-    protected Tank enemyTarget;
+    protected RouteBuilder routeBuilder;
+    protected Vector2 targetPoint;
+    protected Tank enemy;
+
+    protected readonly float MIN_MOVEMENT_DISTANCE = 0.1f;
 
     protected override void Start()
     {
         base.Start();
         viewController = GetComponentInChildren<ViewController>();
-        viewController.onEnemyTargetChanged += OnTargetChanged;
+        routeBuilder = GetComponentInChildren<RouteBuilder>();
+        viewController.OnEnemyTargetChanged.AddListener(OnEnemyChanged);
+        routeBuilder.OnNextPointChanged.AddListener(OnTargetPointChanged);
+        routeBuilder.OnTargetPointReached.AddListener(OnTargetPointReached);
     }
 
     public void Init()
@@ -19,28 +26,50 @@ public class BotController : PlayerController
 
     protected override void Shooting()
     {
-        tank.Shoot();
+        //tank.Shoot();
     }
 
     protected override void Movement()
     {
-        if (enemyTarget == null)
+        if (targetPoint == null)
         {
             return;
         }
-        Vector2 vectorToTarget = enemyTarget.transform.position - tank.transform.position;
-        float angleWithRight = Vector2.Angle(tank.transform.right, vectorToTarget);
-        float angleWithUp = Vector2.Angle(tank.transform.up, vectorToTarget);
-        float horizontalAxis = angleWithRight > 90 ? -1 : 1;
-        if (Mathf.Abs(angleWithUp) < 1)
+        if (MIN_MOVEMENT_DISTANCE < Vector2.Distance(targetPoint, tank.transform.position))
         {
-            horizontalAxis = 0;
+            Vector2 vectorToTarget = targetPoint - (Vector2)tank.transform.position;
+            float angleWithRight = Vector2.Angle(tank.transform.right, vectorToTarget);
+            float angleWithUp = Vector2.Angle(tank.transform.up, vectorToTarget);
+            float horizontalAxis = angleWithRight > 90 ? -1 : 1;
+            if (Mathf.Abs(angleWithUp) < 1)
+            {
+                horizontalAxis = 0;
+            }
+            tank.Rotate(horizontalAxis);
+            if (horizontalAxis == 0)
+            {
+                tank.Move(1);
+            }
         }
-        tank.Rotate(horizontalAxis);
     }
 
-    protected void OnTargetChanged(Tank target)
+    protected void OnTargetPointChanged(Vector2 target)
     {
-        this.enemyTarget = target;
+        targetPoint = target;
+    }
+
+    protected void OnTargetPointReached()
+    {
+        if (enemy == null)
+        {
+            routeBuilder.SetNextPoint();
+        }
+    }
+
+    protected void OnEnemyChanged(Tank enemy)
+    {
+        this.enemy = enemy;
+        Vector2? enemyPosition = enemy?.transform?.position;
+        routeBuilder.SetNextPoint(enemyPosition);
     }
 }
