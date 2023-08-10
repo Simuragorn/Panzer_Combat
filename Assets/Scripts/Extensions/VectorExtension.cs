@@ -21,6 +21,6 @@ namespace Assets.Scripts.Helpers
                 return false;
 
             return true;
-        }
+        }        
     }
 }

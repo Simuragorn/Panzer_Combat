@@ -17,7 +17,13 @@ public class RouteBuilder : MonoBehaviour
     {
         tank = GetComponentInChildren<Tank>();
         routePoints = route.RoutePoints;
-        SetNextPoint(tank.transform.position);
+        SetFirstPoint();
+    }
+
+    protected void SetFirstPoint()
+    {
+        nextPointIndex = GetClosestPoint(tank.transform.position);
+        OnNextPointChanged?.Invoke(routePoints[nextPointIndex]);
     }
 
     public void PointReached(Vector2 point)
@@ -93,7 +99,7 @@ public class RouteBuilder : MonoBehaviour
         }
         var (forwardDistance, backwardDistance) = GetPointsDistanceByRoute(nextPointIndex, closestPointIndex);
         int resultIndex = nextPointIndex +
-            (forwardDistance > backwardDistance ? 1 : -1);
+            (forwardDistance < backwardDistance ? 1 : -1);
 
         if (resultIndex >= routePoints.Count)
         {
@@ -122,5 +128,14 @@ public class RouteBuilder : MonoBehaviour
             }
         }
         return closestPointIndex;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (routePoints?.Any() ?? false)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(routePoints[nextPointIndex], 1);
+        }
     }
 }

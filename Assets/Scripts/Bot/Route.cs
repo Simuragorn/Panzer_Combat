@@ -7,23 +7,19 @@ using UnityEngine;
 public class Route : MonoBehaviour
 {
     [SerializeField] List<RoutePoint> routeObjectPoints;
-    private List<Vector2> _routePoints;
+    public List<Vector2> RoutePoints;
     private List<RouteDistanceBetweenPoints> pointsDistances = new();
 
-    public List<Vector2> RoutePoints
+    private void Awake()
     {
-        get
+        RoutePoints = routeObjectPoints.OrderBy(p => p.Order).Select(p => (Vector2)p.transform.position).ToList();
+        for (int i = 1; i < RoutePoints.Count; i++)
         {
-            if (_routePoints == null)
-            {
-                InitRoutePoints();
-            }
-            return _routePoints;
+            var distance = new RouteDistanceBetweenPoints(i - 1, i, RoutePoints);
+            pointsDistances.Add(distance);
         }
-        private set
-        {
-            _routePoints = value;
-        }
+        var firstLastPointDistance = new RouteDistanceBetweenPoints(0, RoutePoints.Count - 1, RoutePoints);
+        pointsDistances.Add(firstLastPointDistance);
     }
 
     public float GetDistanceBetweenRouteClosestPoints(int point1Index, int point2Index)
@@ -32,21 +28,13 @@ public class Route : MonoBehaviour
         (d.Point1Index == point1Index || d.Point1Index == point2Index) && (d.Point2Index == point2Index || d.Point2Index == point1Index))?.Distance ?? 0;
     }
 
-    private void InitRoutePoints()
-    {
-        _routePoints = routeObjectPoints.OrderBy(p => p.Order).Select(p => (Vector2)p.transform.position).ToList();
-        for (int i = 1; i < _routePoints.Count; i++)
-        {
-            var distance = new RouteDistanceBetweenPoints(i - 1, i, _routePoints);
-            pointsDistances.Add(distance);
-        }
-        var firstLastPointDistance = new RouteDistanceBetweenPoints(0, _routePoints.Count - 1, _routePoints);
-        pointsDistances.Add(firstLastPointDistance);
-    }
-
 
     private void OnDrawGizmosSelected()
     {
+        if (!(RoutePoints?.Any() ?? false))
+        {
+            return;
+        }
         Gizmos.color = Color.yellow;
         for (int i = 1; i < RoutePoints.Count; i++)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.Helpers
@@ -19,6 +20,19 @@ namespace Assets.Scripts.Helpers
                 }
             }
             return null;
+        }
+
+        public static float GetRotationAxisToTarget(Vector2 targetPoint, Transform positionTansform)
+        {
+            Vector2 vectorToTarget = targetPoint - (Vector2)positionTansform.position;
+            float angleWithRight = Vector2.Angle(positionTansform.right, vectorToTarget);
+            float angleWithUp = Vector2.Angle(positionTansform.up, vectorToTarget);
+            float horizontalAxis = angleWithRight > 90 ? -1 : 1;
+            if (angleWithUp < 1)
+            {
+                horizontalAxis = 0;
+            }
+            return horizontalAxis;
         }
     }
 }

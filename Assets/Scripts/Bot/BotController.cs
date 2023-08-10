@@ -1,3 +1,4 @@
+using Assets.Scripts.Helpers;
 using UnityEngine;
 
 public class BotController : PlayerController
@@ -29,28 +30,29 @@ public class BotController : PlayerController
         //tank.Shoot();
     }
 
+    protected bool StaysOnPoint => MIN_MOVEMENT_DISTANCE > Vector2.Distance(targetPoint, tank.transform.position);
+
     protected override void Movement()
     {
         if (targetPoint == null)
         {
             return;
         }
-        if (MIN_MOVEMENT_DISTANCE < Vector2.Distance(targetPoint, tank.transform.position))
+        float horizontalAxis = 0;
+        if (!StaysOnPoint)
         {
-            Vector2 vectorToTarget = targetPoint - (Vector2)tank.transform.position;
-            float angleWithRight = Vector2.Angle(tank.transform.right, vectorToTarget);
-            float angleWithUp = Vector2.Angle(tank.transform.up, vectorToTarget);
-            float horizontalAxis = angleWithRight > 90 ? -1 : 1;
-            if (Mathf.Abs(angleWithUp) < 1)
-            {
-                horizontalAxis = 0;
-            }
-            tank.Rotate(horizontalAxis);
+            horizontalAxis = VectorHelper.GetRotationAxisToTarget(targetPoint, tank.transform);
+
             if (horizontalAxis == 0)
             {
                 tank.Move(1);
             }
         }
+        else if (enemy != null)
+        {
+            horizontalAxis = VectorHelper.GetRotationAxisToTarget((Vector2)enemy.transform.position, tank.transform);
+        }
+        tank.Rotate(horizontalAxis);
     }
 
     protected void OnTargetPointChanged(Vector2 target)
@@ -60,16 +62,16 @@ public class BotController : PlayerController
 
     protected void OnTargetPointReached()
     {
-        if (enemy == null)
-        {
-            routeBuilder.SetNextPoint();
-        }
+        Vector2? target = enemy == null ? null : enemy.transform.position;
+        routeBuilder.SetNextPoint(target);
     }
 
     protected void OnEnemyChanged(Tank enemy)
     {
         this.enemy = enemy;
-        Vector2? enemyPosition = enemy?.transform?.position;
-        routeBuilder.SetNextPoint(enemyPosition);
+        if (enemy == null && StaysOnPoint)
+        {
+            routeBuilder.SetNextPoint();
+        }
     }
 }
