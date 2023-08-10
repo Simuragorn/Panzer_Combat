@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     protected GameController gameController;
     protected bool isGameOver = false;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         gameController = FindObjectOfType<GameController>();
         gameController.OnGameOver.AddListener(GameOver);

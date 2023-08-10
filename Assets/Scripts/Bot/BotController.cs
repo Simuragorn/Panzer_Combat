@@ -10,9 +10,9 @@ public class BotController : PlayerController
 
     protected readonly float MIN_MOVEMENT_DISTANCE = 0.1f;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         viewController = GetComponentInChildren<ViewController>();
         routeBuilder = GetComponentInChildren<RouteBuilder>();
         viewController.OnEnemyTargetChanged.AddListener(OnEnemyChanged);
